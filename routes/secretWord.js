@@ -1,5 +1,9 @@
 const express = require("express");
+const csrf = require('host-csrf');
 const router = express.Router();
+const csrf_middleware = csrf();
+
+router.use(csrf_middleware);
 
 router.get("/", (req, res) => {
     if(!req.session.secretWord) {
@@ -20,4 +24,16 @@ router.post("/", (req, res) => {
 
     res.redirect("/secretWord");
     });
+ 
+// router.get("/get_token", (req, res) => {
+//     const csrfToken = csrf.token();
+//     res.json({ csrfToken });
+// });
+
+const csrfToken = csrf.token();
+res.render("secretWord", {
+    secretWord: req.session.secretWord,
+    csrfToken: csrfToken
+});
+
 module.exports = router;

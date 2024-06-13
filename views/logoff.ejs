@@ -1,9 +1,29 @@
-<%- include("partials/head.ejs") %>
+<!-- <%- include("partials/head.ejs") %>
 <%- include("partials/header.ejs") %>
-<form method="POST"> // i don't think this would be a post method
-    <div>
-        <button>Logoff</button>
-        <a href="/"></a>
-    </div>
-</form>
-<%- include("partials/footer.ejs") %>
+
+<div>
+    <a href="/controllers/logoff"></a>
+
+    <button onclick="logoff()">Logoff</button>
+</div>
+<input type="hidden" name="_csrf" value="<%= _csrf %>">
+
+
+<%- include("partials/footer.ejs") %> -->
+
+
+ <!-- <div>
+    <button>Logoff</button>
+    <a href="/">
+        <button type="button">Logoff</button>
+    </a>
+</div> -->
+
+<!-- <form method="POST" action="/sessions/logoff"">
+    <button type = "button">Logoff</button>
+  </form> -->
+
+  <a href=logon.ejs">
+    <button type="button">Logoff</button>
+    <input type="hidden" name="_csrf" value="<%= _csrf %>">
+  </a>

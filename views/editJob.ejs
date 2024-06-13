@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Job</title>
+</head>
+<body>
+  <h2>Edit Job</h2>
+  <form method="POST" action="/jobs/update/<%= job.id %>">
+    <label for="company">Company:</label>
+    <input type="text" id="company" name="company" value="<%= job.company %>" required><br>
+    <label for="position">Position:</label>
+    <input type="text" id="position" name="position" value="<%= job.position %>" required><br>
+    <label for="status">Status:</label>
+    <input type="text" id="status" name="status" value="<%= job.status %>" required><br>
+    <button type="submit">Update Job</button>
+    <input type="hidden" name="_csrf" value="<%= _csrf %>">
+  </form>
+  <a href="/jobs">Back to Jobs List</a>
+  <% include layout.ejs %>
+  <% layout('layout', { title: 'Edit Job', body: content }) %>
+  <% content %>
+</body>
+</html>

@@ -25,15 +25,16 @@ router.post("/", (req, res) => {
     res.redirect("/secretWord");
     });
  
-// router.get("/get_token", (req, res) => {
-//     const csrfToken = csrf.token();
-//     res.json({ csrfToken });
-// });
-
-const csrfToken = csrf.token();
-res.render("secretWord", {
-    secretWord: req.session.secretWord,
-    csrfToken: csrfToken
+router.get("/get_token", (req, res) => {
+    const csrfToken = csrf.token();
+    res.json({ csrfToken });
 });
+
+//this was breaking my code........whyyy????
+// const csrfToken = csrf.token();
+// res.render("secretWord", {
+//     secretWord: req.session.secretWord,
+//     csrfToken: csrfToken
+// });
 
 module.exports = router;

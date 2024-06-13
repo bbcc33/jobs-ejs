@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Job</title>
+</head>
+<body>
+  <h2>New Job</h2>
+  <form method="POST" action="/jobs">
+    <label for="company">Company:</label>
+    <input type="text" id="company" name="company" required><br>
+    <label for="position">Position:</label>
+    <input type="text" id="position" name="position" required><br>
+    <label for="status">Status:</label>
+    <input type="text" id="status" name="status" required><br>
+    <button type="submit">Add Job</button>
+    <input type="hidden" name="_csrf" value="<%= _csrf %>">
+  </form>
+  <a href="/jobs">Back to Jobs List</a>
+  <% include layout.ejs %>
+  <% layout('layout', { title: 'New Job', body: content }) %>
+  <% content %>
+
+</body>
+</html>

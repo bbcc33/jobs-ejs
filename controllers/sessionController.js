@@ -36,12 +36,16 @@ const registerDo = async (req, res, next) => {
 };
 
 const logoff = (req, res) => {
-    req.session.destroy(function (err) {
-        if (err) {
-            console.log(err);
-        }
-        res.redirect("/");
-    });
+    //not working
+    // req.session.destroy(function (err) {
+    //     if (err) {
+    //         console.log(err);
+    //     }
+    //     res.redirect("/");
+    // });
+    if (req.user) {
+        return res.redirect("/");
+    }
 };
 
 const logonShow = (req, res) => {

@@ -50,9 +50,6 @@ if (app.get("env") === "production") {
 }
 app.use(session(sessionParams))
 
-//this must come after the above app.use because flash depends on session
-app.use(require("connect-flash")());
-
 //CSRF setup
 let csrf_development_mode = true;
 if (app.get("env") === "production") {
@@ -63,12 +60,24 @@ if (app.get("env") === "production") {
 const csrf_options = {
   protected_operation: ["PATCH"],
   protected_content_types: ["application/json"],
+  // development_mode: app.get("env") === "development",
   development_mode: csrf_development_mode,
 };
 
 const csrf_middleware = csrf(csrf_options); //initialise and return middleware
 app.use(csrf_middleware)
 // Generate CSRF token and add it to locals
+
+app.use((req, res, next) => {
+  console.log("Generated CSRF Token: ", req.cookies["csrf-token"]);
+  next();
+})
+
+//this must come after the above app.use because flash depends on session
+app.use(require("connect-flash")());
+
+app.use(require("./middleware/storeLocals"));
+
 app.use((req, res, next) => {
   res.locals.__Host_csrfToken = csrf.token(req, res);
   next();
@@ -86,16 +95,40 @@ app.set("view engine", "ejs");
 app.set("views", "views");
 //parse URL-encoded bodies
 
+app.use((req,res,next)=> {
+  if (req.path == "/multiply") {
+    res.set("Content-Type","application/json")
+  } else {
+    res.set("Content-Type","text/html")
+  }
+  next()
+})
+
+
+//routes
 const jobs = require("./routes/jobs")
 const auth = require("./middleware/auth")
 app.use("/jobs", auth, jobs);
 
-
-app.use(require("./middleware/storeLocals"));
 app.get("/", (req, res) => {
   res.render("index");
 });
 app.use("/sessions", require("./routes/sessionRoutes"));
+
+app.get("/multiply", (req,res)=> {
+  // const first = parseFloat(req.query.first);
+  // const second = parseFloar(req.query.second);
+  // let result = first * second;
+  
+  const result = req.query.first * req.query.second
+  if (result.isNaN) {
+    result = "NaN"
+  } else if (result == null) {
+    result = "null"
+  }
+  res.json({result: result})
+})
+
 
 const secretWordRouter =  require("./routes/secretWord");
 app.use("/secretWord", auth, secretWordRouter);
@@ -111,17 +144,34 @@ app.use((err, req, res, next) => {
 
 const port = process.env.PORT || 3000;
 
-const start = async () => {
-    try {
-      //make sure the two lines below here actually belong here
-      await require("./db/connect")
-      (process.env.MONGO_URI);
-        app.listen(port, () =>
-            console.log(`Server is listening on port ${port} ... `)
-        );
-    } catch (error) {
-        console.log(error);
-    }
-  };
+// const start = async () => {
+//   try {
+// let mongoURL = process.env.MONGO_URI
+// if (process.env.NODE_ENV == "test") {
+// mongoURL = process.env.MONGO_URI_TEST
+// }
+// await require("./db/connect")(mongoURL);
+//   app.listen(port, () =>
+//       console.log(`Server is listening on port ${port} ... `)
+//   );
+// } catch (error) {
+//   console.log(error);
+// }
+// }
 
-start();
+const start = () => {
+    try {
+      require("./db/connect")(url);
+      return app.listen(port, () =>
+      console.log(`Server is listening on port ${port}...`),
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const server = start();
+
+module.exports = { app, server }; 
+
+// start();
